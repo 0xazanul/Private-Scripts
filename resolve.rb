@@ -9,15 +9,18 @@ rescue
 end
 
 file.each_line do |subdomain|
+  # Strip whitespace and remove http/https from the domain
+  clean_subdomain = subdomain.strip.sub(/^https?:\/\//, '')
+
   begin
     color = :green
-    ip = IPSocket::getaddress(subdomain.strip)
+    ip = IPSocket::getaddress(clean_subdomain)
   rescue
     color = :red
     ip = "unknown"
   end
 
-  puts "#{subdomain}: #{ip}".colorize(color)
+  puts "#{clean_subdomain}: #{ip}".colorize(color)
   system("nmap -F #{ip}") unless ip.eql?("unknown")
   puts
   puts "+-----------------------------------------------------------------------------------+"
